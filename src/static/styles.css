@@ -214,7 +214,9 @@ section h3 {
   margin-top: auto;
   padding-top: 10px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 /* Activity Tag */
@@ -566,7 +568,8 @@ footer {
 
 .category-filters,
 .day-filters,
-.time-filters {
+.time-filters,
+.difficulty-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -574,7 +577,8 @@ footer {
 
 .category-filter,
 .day-filter,
-.time-filter {
+.time-filter,
+.difficulty-filter {
   background-color: var(--background);
   border: 1px solid var(--border);
   color: var(--text-primary);
@@ -587,7 +591,8 @@ footer {
 
 .category-filter.active,
 .day-filter.active,
-.time-filter.active {
+.time-filter.active,
+.difficulty-filter.active {
   background-color: var(--primary);
   color: white;
   border-color: var(--primary-dark);
@@ -595,7 +600,8 @@ footer {
 
 .category-filter:hover,
 .day-filter:hover,
-.time-filter:hover {
+.time-filter:hover,
+.difficulty-filter:hover {
   background-color: var(--primary-light);
   color: white;
 }
@@ -712,4 +718,84 @@ footer {
 
 #dark-mode-toggle:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Share button on activity cards */
+.share-button {
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary-light);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 6px;
+}
+
+.share-button:hover {
+  background-color: var(--primary-light);
+  color: white;
+}
+
+/* Share modal */
+.share-modal-content {
+  text-align: center;
+}
+
+.share-modal-content h3 {
+  color: var(--primary);
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+
+.share-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.share-option-button {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  transition: opacity 0.2s ease;
+}
+
+.share-option-button:hover {
+  opacity: 0.85;
+}
+
+.share-twitter {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.share-facebook {
+  background-color: #1877f2;
+  color: #ffffff;
+}
+
+.share-whatsapp {
+  background-color: #25d366;
+  color: #ffffff;
+}
+
+.share-copy {
+  background-color: var(--border);
+  color: var(--text-primary);
+}
+
+.share-copy-message {
+  margin-top: 10px;
+  color: var(--success);
+  font-size: 0.85rem;
+  font-weight: bold;
 }
