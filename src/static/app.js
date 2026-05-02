@@ -1000,4 +1000,35 @@ document.addEventListener("DOMContentLoaded", () => {
   checkAuthentication();
   initializeFilters();
   fetchActivities();
+
+  // Dark mode toggle
+  const darkModeToggle = document.getElementById("dark-mode-toggle");
+
+  if (darkModeToggle) {
+    function applyDarkMode(isDark) {
+      if (isDark) {
+        document.body.classList.add("dark-mode");
+        darkModeToggle.textContent = "☀️";
+        darkModeToggle.setAttribute("aria-label", "Switch to light mode");
+        darkModeToggle.setAttribute("aria-pressed", "true");
+        darkModeToggle.title = "Switch to light mode";
+      } else {
+        document.body.classList.remove("dark-mode");
+        darkModeToggle.textContent = "🌙";
+        darkModeToggle.setAttribute("aria-label", "Switch to dark mode");
+        darkModeToggle.setAttribute("aria-pressed", "false");
+        darkModeToggle.title = "Switch to dark mode";
+      }
+    }
+
+    // Apply saved preference on load
+    const savedDarkMode = localStorage.getItem("darkMode") === "true";
+    applyDarkMode(savedDarkMode);
+
+    darkModeToggle.addEventListener("click", () => {
+      const isDark = !document.body.classList.contains("dark-mode");
+      localStorage.setItem("darkMode", isDark);
+      applyDarkMode(isDark);
+    });
+  }
 });
