@@ -568,6 +568,9 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
+        <button class="share-button" data-activity="${name}" aria-label="Share this activity">
+          📤 Share
+        </button>
       </div>
     `;
 
@@ -587,7 +590,111 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // Add click handler for share button
+    const shareButton = activityCard.querySelector(".share-button");
+    shareButton.addEventListener("click", () => {
+      shareActivity(name, details.description, formattedSchedule);
+    });
+
     activitiesList.appendChild(activityCard);
+  }
+
+  // Share an activity with friends
+  function shareActivity(name, description, schedule) {
+    const shareText = `Check out "${name}" at Mergington High School!\n${description}\nSchedule: ${schedule}`;
+    const shareUrl = window.location.href;
+
+    // Use the native Web Share API if available (works great on mobile)
+    if (navigator.share) {
+      navigator.share({
+        title: name,
+        text: shareText,
+        url: shareUrl,
+      }).catch(() => {
+        // User cancelled or share failed - no action needed
+      });
+      return;
+    }
+
+    // Fallback: show a share dialog with platform links
+    showShareDialog(name, shareText, shareUrl);
+  }
+
+  // Show a share dialog with platform-specific share links
+  function showShareDialog(activityName, shareText, shareUrl) {
+    let shareDialog = document.getElementById("share-dialog");
+    if (!shareDialog) {
+      shareDialog = document.createElement("div");
+      shareDialog.id = "share-dialog";
+      shareDialog.className = "modal hidden";
+      shareDialog.innerHTML = `
+        <div class="modal-content share-modal-content">
+          <span class="close-share-modal">&times;</span>
+          <h3>Share <span id="share-activity-name"></span></h3>
+          <div class="share-options">
+            <a id="share-twitter" class="share-option-button share-twitter" target="_blank" rel="noopener noreferrer">
+              𝕏 X
+            </a>
+            <a id="share-facebook" class="share-option-button share-facebook" target="_blank" rel="noopener noreferrer">
+              Facebook
+            </a>
+            <a id="share-whatsapp" class="share-option-button share-whatsapp" target="_blank" rel="noopener noreferrer">
+              WhatsApp
+            </a>
+            <button id="share-copy-link" class="share-option-button share-copy">
+              🔗 Copy Link
+            </button>
+          </div>
+          <div id="share-copy-message" class="hidden share-copy-message">Link copied!</div>
+        </div>
+      `;
+      document.body.appendChild(shareDialog);
+
+      shareDialog.querySelector(".close-share-modal").addEventListener("click", () => {
+        shareDialog.classList.remove("show");
+        setTimeout(() => shareDialog.classList.add("hidden"), 300);
+      });
+
+      shareDialog.addEventListener("click", (event) => {
+        if (event.target === shareDialog) {
+          shareDialog.classList.remove("show");
+          setTimeout(() => shareDialog.classList.add("hidden"), 300);
+        }
+      });
+
+      // Copy link button: read the current URL from a data attribute set each time the dialog opens
+      const copyMessage = shareDialog.querySelector("#share-copy-message");
+      shareDialog.querySelector("#share-copy-link").addEventListener("click", () => {
+        const urlToCopy = shareDialog.dataset.shareUrl;
+        navigator.clipboard.writeText(urlToCopy).then(() => {
+          copyMessage.classList.remove("hidden");
+          setTimeout(() => copyMessage.classList.add("hidden"), 2000);
+        }).catch(() => {
+          copyMessage.textContent = "Could not copy link. Please copy it manually.";
+          copyMessage.classList.remove("hidden");
+          setTimeout(() => {
+            copyMessage.classList.add("hidden");
+            copyMessage.textContent = "Link copied!";
+          }, 3000);
+        });
+      });
+    }
+
+    const encodedText = encodeURIComponent(shareText);
+    const encodedUrl = encodeURIComponent(shareUrl);
+
+    shareDialog.dataset.shareUrl = shareUrl;
+    shareDialog.querySelector("#share-activity-name").textContent = activityName;
+    shareDialog.querySelector("#share-twitter").href =
+      `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+    shareDialog.querySelector("#share-facebook").href =
+      `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`;
+    shareDialog.querySelector("#share-whatsapp").href =
+      `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
+
+    shareDialog.querySelector("#share-copy-message").classList.add("hidden");
+    shareDialog.classList.remove("hidden");
+    setTimeout(() => shareDialog.classList.add("show"), 10);
   }
 
   // Event listeners for search and filter
